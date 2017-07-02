@@ -4,9 +4,33 @@
         <link rel="stylesheet" href="css/style.css">
     </head>
     <body>
+        <div id='player-screen'>
+            <input id="inventory-btn" type="button" value="Inventory">
+            <input id="player-stats-btn" type="button" value="Player Stats">
+        </div>
+        <div id='display-screen'></div>
         <script src="js/libs/jquery.min.js"></script>
         <script src="js/libs/lodash.js"></script>
         <script src="js/libs//three.min.js"></script>
+        <script src="js/libs//handlebars.min.js"></script>
         <script src="js/main.js"></script>
     </body>
 </html>
+
+<script id="player-stats-template" type="text/x-handlebars-template">
+  <div id="player-stats">
+    <h1>Player Stats</h1>
+    <div id='player-name'>{{name}}</div>
+    <div id='hp-stat'>HP:{{hp}}/{{maxHp}}</div>
+</script>
+
+<script id="inventory-template" type="text/x-handlebars-template">
+  <div id="inventory">
+    <h1>Inventory</h1>
+    <div class="items">
+        {{#each []}}
+            {{name}}-{{description}}
+        {{/each}}
+    </div>
+  </div>
+</script>

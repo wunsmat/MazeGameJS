@@ -7,6 +7,8 @@ var A_KEY_CODE = 65;
 var S_KEY_CODE = 83;
 var D_KEY_CODE = 68;
 
+var player;
+
 var maze = [[ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ],
 			[ 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 ],
 			[ 1, 0, 1, 0, 1, 1, 1, 1, 0, 1 ],
@@ -78,14 +80,15 @@ function init() {
     renderer.setSize( window.innerWidth, window.innerHeight );
 
     document.body.appendChild( renderer.domElement );
-
+	// TODO replace prompt with a GUI interface
+	var name = prompt('Please enter your name');
+	var potion = createItem(new HpRecovery(50), 'Potion', 'A tasty beverage that recovers 50 HP.')
+	player = createPerson(new Player(), name, 100, [potion]);
 }
 
 function animate() {
     requestAnimationFrame( animate );
-
     renderer.render( scene, camera );
-
 }
 
 document.onkeydown = checkKey;
@@ -130,3 +133,61 @@ function checkCollision() {
 function setLightPos() {
 	light.position.set( camera.position.x, camera.position.y, camera.position.z );
 }
+
+// Person functions
+function createPerson(type, name, maxHp, inventory) {
+	return _.assign(
+		type, {
+		name: name, 
+		maxHp: maxHp,
+		hp: maxHp, 
+		inventory: inventory
+	});
+}
+
+function Player() {
+	this.getInventory = function() {
+		return this.inventory;
+	}
+}
+
+// Item functions
+function createItem(type, name, description) {
+	return _.assign(
+		type, {
+		name: name, 
+		description:description
+	});
+}
+
+function HpRecovery(amount) {
+	this.amount = amount;
+	this.useItem = function(person) {
+		person.hp = person.hp + this.amount;
+	}
+}
+
+// Player screen functions
+$('#inventory-btn').click(function() {
+	if(document.getElementById('display-screen').innerHTML === '') {
+		var source = $('#inventory-template').html();
+		var template = Handlebars.compile(source);
+		var context = player.getInventory();
+		var html = template(context);
+		document.getElementById('display-screen').innerHTML = html;
+	} else {
+		document.getElementById('display-screen').innerHTML = '';
+	}
+});
+
+$('#player-stats-btn').click(function() {
+	if(document.getElementById('display-screen').innerHTML === '') {
+		var source = $('#player-stats-template').html();
+		var template = Handlebars.compile(source);
+		var context = player;
+		var html = template(context);
+		document.getElementById('display-screen').innerHTML = html;
+	} else {
+		document.getElementById('display-screen').innerHTML = '';
+	}
+});
